@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 
 interface moviesState {
   nowPlaying: IMovie[] | null;
@@ -60,7 +60,9 @@ export const moviesSlice = createSlice({
       state.user.watchlist.push(action.payload);
     },
     removeUserWatchlist: (state, action: PayloadAction<number>) => {
-      state.user.watchlist = state.user.watchlist.filter(movie => movie.id !== action.payload);
+      state.user.watchlist = state.user.watchlist.filter(
+        movie => movie.id !== action.payload,
+      );
     },
     setUserWatched: (state, action: PayloadAction<IMovie[]>) => {
       state.user.watched = action.payload;
@@ -69,9 +71,14 @@ export const moviesSlice = createSlice({
       state.user.watched.push(action.payload);
     },
     removeUserWatched: (state, action: PayloadAction<number>) => {
-      state.user.watched = state.user.watched.filter(movie => movie.id !== action.payload);
+      state.user.watched = state.user.watched.filter(
+        movie => movie.id !== action.payload,
+      );
     },
-    setUserList: (state, action: PayloadAction<{ name: string; movies: IMovie[] }>) => {
+    setUserList: (
+      state,
+      action: PayloadAction<{name: string; movies: IMovie[]}>,
+    ) => {
       const id = Date.now();
       state.user.list.push({
         id,
@@ -79,7 +86,10 @@ export const moviesSlice = createSlice({
         movies: action.payload.movies,
       });
     },
-    addUserList: (state, action: PayloadAction<{ name: string; movies: IMovie[] }>) => {
+    addUserList: (
+      state,
+      action: PayloadAction<{name: string; movies: IMovie[]}>,
+    ) => {
       const id = Date.now();
       state.user.list.push({
         id,
@@ -88,23 +98,38 @@ export const moviesSlice = createSlice({
       });
     },
     removeUserList: (state, action: PayloadAction<number>) => {
-      state.user.list = state.user.list.filter(list => list.id !== action.payload);
+      state.user.list = state.user.list.filter(
+        list => list.id !== action.payload,
+      );
     },
-    addMovieToList: (state, action: PayloadAction<{ listId: number; movie: IMovie }>) => {
+    addMovieToList: (
+      state,
+      action: PayloadAction<{listId: number; movie: IMovie}>,
+    ) => {
       const list = state.user.list.find(l => l.id === action.payload.listId);
       if (list) {
         list.movies.push(action.payload.movie);
       }
     },
-    removeMovieFromList: (state, action: PayloadAction<{ listId: number; movieId: number }>) => {
+    removeMovieFromList: (
+      state,
+      action: PayloadAction<{listId: number; movieId: number}>,
+    ) => {
       const list = state.user.list.find(l => l.id === action.payload.listId);
       if (list) {
-        list.movies = list.movies.filter(movie => movie.id !== action.payload.movieId);
+        list.movies = list.movies.filter(
+          movie => movie.id !== action.payload.movieId,
+        );
       }
     },
     addFriend: (
       state,
-      action: PayloadAction<{ id: string; name: string; friendshipId: string; avatar: string }>
+      action: PayloadAction<{
+        id: string;
+        name: string;
+        friendshipId: string;
+        avatar: string;
+      }>,
     ) => {
       state.friends.push({
         id: action.payload.id,
@@ -115,41 +140,66 @@ export const moviesSlice = createSlice({
         avatar: action.payload.avatar,
       });
     },
-    setFriendWatchlist: (state, action: PayloadAction<{ id: string; movies: IMovie[] }>) => {
+    setFriendWatchlist: (
+      state,
+      action: PayloadAction<{id: string; movies: IMovie[]}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
         friend.watchlist = action.payload.movies;
       }
     },
-    addFriendWatchlist: (state, action: PayloadAction<{ id: string; movie: IMovie }>) => {
+    addFriendWatchlist: (
+      state,
+      action: PayloadAction<{id: string; movie: IMovie}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
         friend.watchlist.push(action.payload.movie);
       }
     },
-    removeFriendWatchlist: (state, action: PayloadAction<{ id: string; movieId: number }>) => {
+    removeFriendWatchlist: (
+      state,
+      action: PayloadAction<{id: string; movieId: number}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
-        friend.watchlist = friend.watchlist.filter(movie => movie.id !== action.payload.movieId);
+        friend.watchlist = friend.watchlist.filter(
+          movie => movie.id !== action.payload.movieId,
+        );
       }
     },
-    setFriendWatched: (state, action: PayloadAction<{ id: string; movies: IMovie[] }>) => {
+    setFriendWatched: (
+      state,
+      action: PayloadAction<{id: string; movies: IMovie[]}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
         friend.watched = action.payload.movies;
       }
     },
-    addFriendWatched: (state, action: PayloadAction<{ id: string; movie: IMovie }>) => {
+    addFriendWatched: (
+      state,
+      action: PayloadAction<{id: string; movie: IMovie}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
         friend.watched.push(action.payload.movie);
       }
     },
-    removeFriendWatched: (state, action: PayloadAction<{ id: string; movieId: number }>) => {
+    removeFriendWatched: (
+      state,
+      action: PayloadAction<{id: string; movieId: number}>,
+    ) => {
       const friend = state.friends.find(f => f.id === action.payload.id);
       if (friend) {
-        friend.watched = friend.watched.filter(movie => movie.id !== action.payload.movieId);
+        friend.watched = friend.watched.filter(
+          movie => movie.id !== action.payload.movieId,
+        );
       }
+    },
+    setFriends: (state, action: PayloadAction<typeof state.friends>) => {
+      state.friends = action.payload;
     },
   },
 });
@@ -177,5 +227,6 @@ export const {
   addMovieToList,
   removeMovieFromList,
   addFriend,
+  setFriends,
 } = moviesSlice.actions;
 export default moviesSlice.reducer;

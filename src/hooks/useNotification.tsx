@@ -5,6 +5,7 @@ import {
 } from '@src/store/slices/notificationSlice';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {useEffect} from 'react';
+import {addFriend, setFriends} from '@src/store/slices/moviesSlice';
 
 import useMovies from './useMovies';
 import useUser from './useUser';
@@ -20,6 +21,7 @@ const useNotification = () => {
   const notifications = useAppSelector(
     state => state.notifications.notifications,
   );
+  const friends = useAppSelector(state => state.movies.friends);
 
   const {
     getAllRequests,
@@ -36,7 +38,24 @@ const useNotification = () => {
   ) => {
     dispatch(updateNotificationStatus({id, status: action}));
     if (action === notificationActionTypes.accept) {
-      await acceptFriendshipRequest(id);
+      const response = await acceptFriendshipRequest(id);
+      if (response) {
+        const notification = notifications.find(n => n._id === id);
+        if (notification) {
+          const otherUser =
+            notification.from._id === userId
+              ? notification.to
+              : notification.from;
+          dispatch(
+            addFriend({
+              id: otherUser._id,
+              name: otherUser.userName,
+              friendshipId: response.friendshipId,
+              avatar: otherUser.avatarId,
+            }),
+          );
+        }
+      }
     } else if (action === notificationActionTypes.reject) {
       await rejectFriendshipRequest(id);
     } else if (action === notificationActionTypes.cancelled) {
@@ -82,6 +101,20 @@ const useNotification = () => {
     }
   }, [notifications]);
 
+  useEffect(() => {
+    const uniqueFriends = friends.reduce((acc, friend) => {
+      const existing = acc.find(f => f.id === friend.id);
+      if (!existing) {
+        return [...acc, friend];
+      }
+      return acc;
+    }, [] as typeof friends);
+
+    if (uniqueFriends.length !== friends.length) {
+      dispatch(setFriends(uniqueFriends));
+    }
+  }, [friends]);
+
   const updateByNotification = async (remoteMessage: any) => {
     const notificationData = JSON.parse(remoteMessage.data.notificationData);
     console.log('notificationData', notificationData);
@@ -109,6 +142,21 @@ const useNotification = () => {
         image,
         subTitle: 'Friendship request',
       };
+
+      if (notificationData.status === notificationActionTypes.accept) {
+        const otherUser =
+          notificationData.from._id === userId
+            ? notificationData.to
+            : notificationData.from;
+        dispatch(
+          addFriend({
+            id: otherUser._id,
+            name: otherUser.userName,
+            friendshipId: notificationData._id,
+            avatar: otherUser.avatarId,
+          }),
+        );
+      }
     }
 
     dispatch(addNotification(newNotification));
