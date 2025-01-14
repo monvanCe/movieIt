@@ -4,6 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import {loginService} from '@src/service/internalServices';
 import {setCurrentUser} from '@src/store/slices/authSlice';
 import {useAppDispatch} from '@src/store/store';
+import {initializeNotifications} from '@src/utils/notification';
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -12,15 +13,13 @@ export const useAuth = () => {
     const platform = Platform.OS === 'ios' ? 'IOS' : 'ANDROID';
     const appVersion = Number(process.env.EXPO_PUBLIC_APP_VERSION) || 1;
 
-    //TODO: get notification token
-    const notificationId = 'ss';
+    const notificationId = await initializeNotifications();
 
     try {
-      // @ts-ignore
       const response = await loginService(
         userUniqueKey,
         platform,
-        notificationId,
+        notificationId ?? undefined,
         appVersion,
       );
       const user = {...response.user, token: response.token};

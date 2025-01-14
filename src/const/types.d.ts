@@ -89,7 +89,15 @@ interface IToken {
 }
 
 interface INotification {
-  id: string;
+  _id: string;
+  type: notificationTypes;
+  from: any;
+  to: any;
+  status: string;
   message: string;
-  type: 'success' | 'error' | 'info';
+  createdAt: string;
+  movie: any;
+  updatedAt: string;
+  image?: string;
+  subTitle?: string;
 }

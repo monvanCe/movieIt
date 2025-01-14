@@ -10,7 +10,7 @@ import {
 } from '@src/store/slices/appConfigSlice';
 import {store} from '@src/store/store';
 import storage from '@src/utils/storage';
-import {Platform, NativeModules} from 'react-native';
+import * as RNLocalize from 'react-native-localize';
 
 export const loadTheme = async () => {
   const appTheme = (await storage.getItem(storageKeys.appTheme)) as appTheme;
@@ -24,16 +24,14 @@ export const loadLanguage = async () => {
   const appLanguage = (await storage.getItem(
     storageKeys.appLanguage,
   )) as string;
-  let language = '';
+
+  let language = 'en';
 
   if (appLanguage) {
     language = appLanguage;
   } else {
-    language =
-      Platform.OS === 'ios'
-        ? NativeModules.SettingsManager.settings.AppleLocale ||
-          NativeModules.SettingsManager.settings.AppleLanguages[0]
-        : NativeModules.I18nManager.localeIdentifier;
+    const deviceLanguages = RNLocalize.getLocales();
+    language = deviceLanguages[0]?.languageCode || 'en';
   }
 
   i18n.locale = language;

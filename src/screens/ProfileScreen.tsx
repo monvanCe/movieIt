@@ -30,7 +30,12 @@ export default function ProfileScreen() {
   const {toggle, isToggle} = useToggle();
 
   return (
-    <View style={{alignItems: 'center', flex: 1}}>
+    <View
+      style={{
+        alignItems: 'center',
+        flex: 1,
+        backgroundColor: colors.background,
+      }}>
       <PrimaryText>{user?.userName}</PrimaryText>
 
       <View

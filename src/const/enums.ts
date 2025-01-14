@@ -23,3 +23,8 @@ export enum requestTypes {
   cancelled,
   removing,
 }
+
+export enum notificationTypes {
+  friendshipMovies = 'friendshipMovies',
+  friendship = 'friendship',
+}

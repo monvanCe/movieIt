@@ -5,7 +5,7 @@ import axiosInstance from './axiosConfig';
 const getBaseURL = (type: string) => {
   const state = store.getState();
   return type === 'internal'
-    ? 'http://127.0.0.1:3001'
+    ? 'http://10.0.2.2:3001'
     : state.appConfig.externalURL;
 };
 
@@ -14,9 +14,9 @@ export const getRequest = async (
   endpoint: string,
   params = {},
 ) => {
-  const url = getBaseURL(type);
+  const url = getBaseURL(type) + endpoint;
   try {
-    const res = await axiosInstance.get(`${url}${endpoint}`, {params});
+    const res = await axiosInstance.get(`${url}`, {params});
     return res.data;
   } catch (err) {
     console.error(`GET request to ${url}${endpoint} failed`, err);
@@ -30,14 +30,14 @@ export const postRequest = async (
   body = {},
   params = {},
 ) => {
-  const url = getBaseURL(type);
-  return axiosInstance
-    .post(`${url}${endpoint}`, body, {params})
-    .then(res => res.data)
-    .catch(err => {
-      console.error(`POST request to ${url}${endpoint} failed`, err);
-      throw err;
-    });
+  const url = getBaseURL(type) + endpoint;
+  try {
+    const res = await axiosInstance.post(`${url}`, body, {params});
+    return res.data;
+  } catch (err) {
+    console.error(`POST request to ${url} failed`, err);
+    throw err;
+  }
 };
 
 export const deleteRequest = async (
@@ -45,14 +45,14 @@ export const deleteRequest = async (
   endpoint: string,
   params = {},
 ) => {
-  const url = getBaseURL(type);
-  return axiosInstance
-    .delete(`${url}${endpoint}`, {params})
-    .then(res => res.data)
-    .catch(err => {
-      console.error(`DELETE request to ${url}${endpoint} failed`, err);
-      throw err;
-    });
+  const url = getBaseURL(type) + endpoint;
+  try {
+    const res = await axiosInstance.delete(`${url}`, {params});
+    return res.data;
+  } catch (err) {
+    console.error(`DELETE request to ${url} failed`, err);
+    throw err;
+  }
 };
 
 export const putRequest = async (
@@ -61,12 +61,12 @@ export const putRequest = async (
   body = {},
   params = {},
 ) => {
-  const url = getBaseURL(type);
-  return axiosInstance
-    .put(`${url}${endpoint}`, body, {params})
-    .then(res => res.data)
-    .catch(err => {
-      console.error(`PUT request to ${url}${endpoint} failed`, err);
-      throw err;
-    });
+  const url = getBaseURL(type) + endpoint;
+  try {
+    const res = await axiosInstance.put(`${url}`, body, {params});
+    return res.data;
+  } catch (err) {
+    console.error(`PUT request to ${url} failed`, err);
+    throw err;
+  }
 };

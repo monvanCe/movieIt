@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 
 interface NotificationState {
   notifications: INotification[];
@@ -17,7 +17,7 @@ const notificationSlice = createSlice({
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(
-        notification => notification.id !== action.payload
+        notification => notification._id !== action.payload,
       );
     },
     setNotification: (state, action: PayloadAction<INotification[]>) => {
@@ -26,5 +26,6 @@ const notificationSlice = createSlice({
   },
 });
 
-export const { addNotification, removeNotification, setNotification } = notificationSlice.actions;
+export const {addNotification, removeNotification, setNotification} =
+  notificationSlice.actions;
 export default notificationSlice.reducer;
