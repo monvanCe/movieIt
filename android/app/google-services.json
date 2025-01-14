@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531116210238",
+    "project_id": "movie-app-a9c4c",
+    "storage_bucket": "movie-app-a9c4c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531116210238:android:9f29fa37daba1480ebb96f",
+        "android_client_info": {
+          "package_name": "com.monvance.movieIt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuJOqf4fM6xEgbVSs6-IpKP_Mqrlp7Nng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

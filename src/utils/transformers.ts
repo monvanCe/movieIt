@@ -1,0 +1,16 @@
+export const movieDataTransformer = (movie: any) => ({
+  isAdult: movie.adult,
+  backdropPath: movie.backdrop_path,
+  genreIds: movie.genres,
+  id: movie.id,
+  originalLanguage: movie.original_language,
+  originalTitle: movie.original_title,
+  overview: movie.overview,
+  popularity: movie.popularity,
+  posterPath: movie.poster_path || 'ss',
+  releaseDate: movie.release_date,
+  title: movie.title,
+  video: movie.video,
+  voteAverage: movie.vote_average,
+  voteCount: movie.vote_count,
+});

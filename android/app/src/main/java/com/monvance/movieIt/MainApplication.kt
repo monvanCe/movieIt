@@ -1,4 +1,4 @@
-package com.movieit
+package com.monvance.movieIt
 
 import android.app.Application
 import com.facebook.react.PackageList

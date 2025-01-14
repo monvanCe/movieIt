@@ -1,4 +1,4 @@
-package com.movieit
+package com.monvance.movieIt
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
