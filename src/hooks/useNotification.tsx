@@ -1,13 +1,18 @@
 import {
   addNotification,
   setNotification,
+  updateNotificationStatus,
 } from '@src/store/slices/notificationSlice';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {useEffect} from 'react';
 
 import useMovies from './useMovies';
 import useUser from './useUser';
-import {notificationTypes} from '@src/const/enums';
+import {
+  notificationTypes,
+  notificationActionTypes,
+  movieActionTypes,
+} from '@src/const/enums';
 
 const useNotification = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +29,35 @@ const useNotification = () => {
   } = useUser();
 
   const {getMovie, answerFriendMovieRequest} = useMovies();
+
+  const handleFriendshipAction = async (
+    id: string,
+    action: notificationActionTypes,
+  ) => {
+    dispatch(updateNotificationStatus({id, status: action}));
+    if (action === notificationActionTypes.accept) {
+      await acceptFriendshipRequest(id);
+    } else if (action === notificationActionTypes.reject) {
+      await rejectFriendshipRequest(id);
+    } else if (action === notificationActionTypes.cancelled) {
+      await cancelFriendshipRequest(id);
+    }
+  };
+
+  const handleMovieAction = async (
+    id: string,
+    action: notificationActionTypes,
+    movie: any,
+    movieType: string,
+  ) => {
+    dispatch(updateNotificationStatus({id, status: action}));
+    await answerFriendMovieRequest(
+      id,
+      action,
+      movie,
+      movieType as movieActionTypes,
+    );
+  };
 
   useEffect(() => {
     const uniqueNotifications = notifications.reduce((acc, notification) => {
@@ -109,11 +143,19 @@ const useNotification = () => {
   return {
     notifications,
     getAllRequests,
-    acceptFriendshipRequest,
-    rejectFriendshipRequest,
-    cancelFriendshipRequest,
+    acceptFriendshipRequest: (id: string) =>
+      handleFriendshipAction(id, notificationActionTypes.accept),
+    rejectFriendshipRequest: (id: string) =>
+      handleFriendshipAction(id, notificationActionTypes.reject),
+    cancelFriendshipRequest: (id: string) =>
+      handleFriendshipAction(id, notificationActionTypes.cancelled),
     getMovie,
-    answerFriendMovieRequest,
+    answerFriendMovieRequest: (
+      id: string,
+      action: notificationActionTypes,
+      movie: any,
+      movieType: string,
+    ) => handleMovieAction(id, action, movie, movieType),
     loadNotifications,
     userId,
     updateByNotification,

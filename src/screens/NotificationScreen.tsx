@@ -9,6 +9,11 @@ import useNotification from '@src/hooks/useNotification';
 import {FlashList} from '@shopify/flash-list';
 import {borderRadius, borderWidths, paddings} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
+import {
+  notificationTypes,
+  notificationActionTypes,
+  movieActionTypes,
+} from '@src/const/enums';
 
 export default function NotificationScreen() {
   const colors = theme.useTheme();
@@ -30,11 +35,11 @@ export default function NotificationScreen() {
     switch (type) {
       case 'send':
         return colors.warning;
-      case 'accept':
+      case notificationActionTypes.accept:
         return colors.success;
-      case 'reject':
+      case notificationActionTypes.reject:
         return colors.error;
-      case 'cancelled':
+      case notificationActionTypes.cancelled:
         return colors.border;
       case 'removing':
         return colors.border;
@@ -62,16 +67,16 @@ export default function NotificationScreen() {
   };
 
   const movieIconRenderer = (item: any) => {
-    if (item.type === 'friendshipMovies') {
+    if (item.type === notificationTypes.friendshipMovies) {
       switch (item.movieType) {
-        case 'towatched':
+        case movieActionTypes.towatched:
           return 'add';
-        case 'watched':
+        case movieActionTypes.watched:
           return 'checkmark';
       }
     }
 
-    if (item.type === 'friendship') {
+    if (item.type === notificationTypes.friendship) {
       return 'add';
     }
   };
@@ -82,13 +87,6 @@ export default function NotificationScreen() {
         flex: 1,
         backgroundColor: colors.background,
       }}>
-      <Ionicons
-        name="reload"
-        size={24}
-        color={colors.primary}
-        onPress={loadNotifications}
-      />
-
       <FlashList
         data={notifications}
         renderItem={({item, index}: {item: any; index: number}) => (
@@ -108,7 +106,7 @@ export default function NotificationScreen() {
               <Image
                 source={{
                   uri:
-                    item.type === 'friendship'
+                    item.type === notificationTypes.friendship
                       ? item.image
                       : lowResImage(item.image),
                 }}
@@ -122,7 +120,7 @@ export default function NotificationScreen() {
                   right: 0,
                   bottom: 0,
                   backgroundColor:
-                    item.movieType === 'towatched'
+                    item.movieType === movieActionTypes.towatched
                       ? colors.warning
                       : colors.success,
                 }}>
@@ -144,10 +142,10 @@ export default function NotificationScreen() {
                   size={32}
                   color={colors.success}
                   onPress={() =>
-                    item.type === 'friendshipMovies'
+                    item.type === notificationTypes.friendshipMovies
                       ? answerFriendMovieRequest(
                           item._id,
-                          'accept',
+                          notificationActionTypes.accept,
                           item.movie,
                           item.movieType,
                         )
@@ -159,10 +157,10 @@ export default function NotificationScreen() {
                   size={32}
                   color={colors.error}
                   onPress={() =>
-                    item.type === 'friendshipMovies'
+                    item.type === notificationTypes.friendshipMovies
                       ? answerFriendMovieRequest(
                           item._id,
-                          'reject',
+                          notificationActionTypes.reject,
                           item.movie,
                           item.movieType,
                         )
@@ -178,10 +176,10 @@ export default function NotificationScreen() {
                   size={32}
                   color={colors.error}
                   onPress={() => {
-                    item.type === 'friendshipMovies'
+                    item.type === notificationTypes.friendshipMovies
                       ? answerFriendMovieRequest(
                           item._id,
-                          'cancelled',
+                          notificationActionTypes.cancelled,
                           item.movie,
                           item.movieType,
                         )

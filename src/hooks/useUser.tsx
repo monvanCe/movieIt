@@ -17,10 +17,13 @@ import {
 import {store} from '@src/store/store';
 
 import useMovies from './useMovies';
+import useFriendshipNotification from './useFriendshipNotification';
 
 export default function useUser() {
   const {getMovie} = useMovies();
   const dispatch = store.dispatch;
+  const {addSentFriendshipRequest} = useFriendshipNotification();
+
   const getAllRequests = async () => {
     try {
       const response = await getAllRequestsService();
@@ -42,6 +45,9 @@ export default function useUser() {
   const sendFriendshipRequest = async (friendId: string) => {
     try {
       const response = await sendFriendshipRequestService(friendId);
+      if (response.requestId) {
+        addSentFriendshipRequest(response.requestId, {_id: friendId});
+      }
       return response;
     } catch (error) {
       throw error;

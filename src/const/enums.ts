@@ -28,3 +28,14 @@ export enum notificationTypes {
   friendshipMovies = 'friendshipMovies',
   friendship = 'friendship',
 }
+
+export enum notificationActionTypes {
+  accept = 'accept',
+  reject = 'reject',
+  cancelled = 'cancelled',
+}
+
+export enum movieActionTypes {
+  towatched = 'towatched',
+  watched = 'watched',
+}

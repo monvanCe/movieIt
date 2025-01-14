@@ -23,9 +23,24 @@ const notificationSlice = createSlice({
     setNotification: (state, action: PayloadAction<INotification[]>) => {
       state.notifications = action.payload;
     },
+    updateNotificationStatus: (
+      state,
+      action: PayloadAction<{id: string; status: string}>,
+    ) => {
+      const notification = state.notifications.find(
+        n => n._id === action.payload.id,
+      );
+      if (notification) {
+        notification.status = action.payload.status;
+      }
+    },
   },
 });
 
-export const {addNotification, removeNotification, setNotification} =
-  notificationSlice.actions;
+export const {
+  addNotification,
+  removeNotification,
+  setNotification,
+  updateNotificationStatus,
+} = notificationSlice.actions;
 export default notificationSlice.reducer;
