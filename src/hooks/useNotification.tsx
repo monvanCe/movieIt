@@ -5,7 +5,12 @@ import {
 } from '@src/store/slices/notificationSlice';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {useEffect} from 'react';
-import {addFriend, setFriends} from '@src/store/slices/moviesSlice';
+import {
+  addFriend,
+  setFriends,
+  addFriendWatchlist,
+  addFriendWatched,
+} from '@src/store/slices/moviesSlice';
 
 import useMovies from './useMovies';
 import useUser from './useUser';
@@ -66,14 +71,30 @@ const useNotification = () => {
   const handleMovieAction = async (
     id: string,
     action: notificationActionTypes,
-    movie: any,
+    movieId: any,
     movieType: string,
   ) => {
     dispatch(updateNotificationStatus({id, status: action}));
+    if (action === notificationActionTypes.accept) {
+      const notification = notifications.find(n => n._id === id);
+      if (notification) {
+        const otherUserId =
+          notification.from._id === userId
+            ? notification.to._id
+            : notification.from._id;
+        if (movieType === movieActionTypes.towatched) {
+          const movie = await getMovie(movieId);
+          dispatch(addFriendWatchlist({id: otherUserId, movie}));
+        } else if (movieType === movieActionTypes.watched) {
+          const movie = await getMovie(movieId);
+          dispatch(addFriendWatched({id: otherUserId, movie}));
+        }
+      }
+    }
     await answerFriendMovieRequest(
       id,
       action,
-      movie,
+      movieId,
       movieType as movieActionTypes,
     );
   };
@@ -131,6 +152,15 @@ const useNotification = () => {
         image: movie.posterPath,
         subTitle: movie.title,
       };
+
+      if (notificationData.status === notificationActionTypes.accept) {
+        const receiverId = notificationData.from._id;
+        if (notificationData.movieType === movieActionTypes.towatched) {
+          dispatch(addFriendWatchlist({id: receiverId, movie}));
+        } else if (notificationData.movieType === movieActionTypes.watched) {
+          dispatch(addFriendWatched({id: receiverId, movie}));
+        }
+      }
     } else if (notificationData.type === notificationTypes.friendship) {
       const image =
         notificationData.from._id === userId

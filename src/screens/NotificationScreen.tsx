@@ -131,7 +131,7 @@ export default function NotificationScreen() {
                 />
               </View>
             </View>
-            <View style={{marginRight: 'auto'}}>
+            <View style={{marginRight: 'auto', maxWidth: '50%'}}>
               <PrimaryText>{nameRenderer(item)}</PrimaryText>
               <SecondaryText>{item.subTitle}</SecondaryText>
             </View>
