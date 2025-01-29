@@ -5,7 +5,7 @@ import axiosInstance from './axiosConfig';
 const getBaseURL = (type: string) => {
   const state = store.getState();
   return type === 'internal'
-    ? 'http://10.0.2.2:3001'
+    ? state.appConfig.internalUrl
     : state.appConfig.externalURL;
 };
 

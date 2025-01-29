@@ -2067,6 +2067,11 @@
   dependencies:
     firebase "10.13.2"
 
+"@react-native-firebase/firestore@^21.6.2":
+  version "21.6.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.6.2.tgz#8e98650cdfe26d576727af38573c583011ded020"
+  integrity sha512-TgG8uyVp7WuCzVxh8b4LoTU0TolP8pgsLvb/TSwqVN8kNvnczRfc2zcoAmCP86SpHW1EFCMra71Z2uUojqtQkQ==
+
 "@react-native-firebase/messaging@^21.6.1":
   version "21.6.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-21.6.1.tgz#95c45ad7ca81d9a88ce0bfee05ba3a2555c85058"

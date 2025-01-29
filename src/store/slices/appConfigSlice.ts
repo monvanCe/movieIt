@@ -8,6 +8,7 @@ interface AppConfigState {
   appTheme: appTheme;
   appLanguage: string;
   avatars: string[];
+  internalUrl: string | null;
 }
 
 const initialState: AppConfigState = {
@@ -16,6 +17,7 @@ const initialState: AppConfigState = {
   appTheme: appTheme.Dark,
   appLanguage: 'en',
   avatars: [],
+  internalUrl: null,
 };
 
 export const appConfigSlice = createSlice({
@@ -38,6 +40,9 @@ export const appConfigSlice = createSlice({
     setAvatars: (state, action: PayloadAction<string[]>) => {
       state.avatars = action.payload;
     },
+    setInternalUrl: (state, action: PayloadAction<string>) => {
+      state.internalUrl = action.payload;
+    },
   },
 });
 
@@ -47,6 +52,7 @@ export const {
   setExternalApiKey,
   setAppLanguage,
   setAvatars,
+  setInternalUrl,
 } = appConfigSlice.actions;
 
 export default appConfigSlice.reducer;

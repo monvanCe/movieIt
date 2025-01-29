@@ -138,7 +138,6 @@ const useNotification = () => {
 
   const updateByNotification = async (remoteMessage: any) => {
     const notificationData = JSON.parse(remoteMessage.data.notificationData);
-    console.log('notificationData', notificationData);
 
     let newNotification: INotification = {
       ...notificationData,

@@ -7,10 +7,12 @@ import {
   setAvatars,
   setExternalApiKey,
   setExternalURL,
+  setInternalUrl,
 } from '@src/store/slices/appConfigSlice';
 import {store} from '@src/store/store';
 import storage from '@src/utils/storage';
 import * as RNLocalize from 'react-native-localize';
+import {getDocument} from '@src/service/firestore';
 
 export const loadTheme = async () => {
   const appTheme = (await storage.getItem(storageKeys.appTheme)) as appTheme;
@@ -66,4 +68,15 @@ export const loadAppConfig = async () => {
   dispatch(setAvatars(avatars));
   dispatch(setExternalURL(externalUrl));
   dispatch(setExternalApiKey(externalApiKey));
+};
+
+export const loadInternalUrl = async () => {
+  const dispatch = store.dispatch;
+  const doc = await getDocument('appConfig', 'baseUrl');
+
+  if (doc) {
+    const isDev = __DEV__;
+    const url = isDev ? doc.dev : doc.production;
+    dispatch(setInternalUrl(url));
+  }
 };

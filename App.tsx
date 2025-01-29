@@ -16,6 +16,7 @@ import {
   loadAppConfig,
   loadLanguage,
   loadTheme,
+  loadInternalUrl,
 } from '@src/store/actions/appConfigActions';
 import {appTheme} from '@src/const/enums';
 import theme, {themes} from '@src/styles/theme';
@@ -45,6 +46,7 @@ function AppLayout() {
 
   useEffect(() => {
     const loadApp = async () => {
+      await loadInternalUrl();
       await login();
       await loadTheme();
       await loadLanguage();
