@@ -6,12 +6,20 @@ import theme from '@src/styles/theme';
 
 import {styles} from './styles';
 
-export default function PosterItem({movie}: {movie: IMovie}) {
+interface PosterItemProps {
+  movie: IMovie;
+  onPress?: () => void;
+}
+
+export default function PosterItem({movie, onPress}: PosterItemProps) {
   const colors = theme.useTheme();
   const style = React.useMemo(() => styles(colors), [colors]);
 
   return (
-    <TouchableOpacity activeOpacity={1} style={style.container}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={style.container}
+      onPress={onPress}>
       <Image
         source={{uri: imageSources.lowResImage(movie.posterPath)}}
         style={style.image}

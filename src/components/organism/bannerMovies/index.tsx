@@ -7,7 +7,11 @@ import actions from '@src/store/actions';
 import {useAppSelector} from '@src/store/store';
 import {margins} from '@src/styles/sizes';
 
-export default function BannerMovies() {
+interface BannerMoviesProps {
+  onMoviePress?: (movie: IMovie) => void;
+}
+
+export default function BannerMovies({onMoviePress}: BannerMoviesProps) {
   const {topRated, upComing, nowPlaying, popular} = useAppSelector(
     state => state.movies,
   );
@@ -19,10 +23,26 @@ export default function BannerMovies() {
 
   return (
     <ScrollView style={{flex: 1, marginBottom: margins.small}}>
-      <MoviesSlider movies={topRated ?? []} text={i18n.t('topRated')} />
-      <MoviesSlider movies={popular ?? []} text={i18n.t('popular')} />
-      <MoviesSlider movies={upComing ?? []} text={i18n.t('upComing')} />
-      <MoviesSlider movies={nowPlaying ?? []} text={i18n.t('nowPlaying')} />
+      <MoviesSlider
+        movies={topRated ?? []}
+        text={i18n.t('topRated')}
+        onMoviePress={onMoviePress}
+      />
+      <MoviesSlider
+        movies={popular ?? []}
+        text={i18n.t('popular')}
+        onMoviePress={onMoviePress}
+      />
+      <MoviesSlider
+        movies={upComing ?? []}
+        text={i18n.t('upComing')}
+        onMoviePress={onMoviePress}
+      />
+      <MoviesSlider
+        movies={nowPlaying ?? []}
+        text={i18n.t('nowPlaying')}
+        onMoviePress={onMoviePress}
+      />
     </ScrollView>
   );
 }

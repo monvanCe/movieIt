@@ -7,7 +7,14 @@ import theme from '@src/styles/theme';
 
 import {styles} from './styles';
 
-export default function HorizontalList({movies}: IMovies) {
+interface HorizontalListProps extends IMovies {
+  onMoviePress?: (movie: IMovie) => void;
+}
+
+export default function HorizontalList({
+  movies,
+  onMoviePress,
+}: HorizontalListProps) {
   const colors = theme.useTheme();
   const style = React.useMemo(() => styles(colors), [colors]);
 
@@ -18,7 +25,9 @@ export default function HorizontalList({movies}: IMovies) {
         data={movies}
         keyExtractor={item => item.id.toString()}
         horizontal
-        renderItem={({item}) => <PosterItem movie={item} />}
+        renderItem={({item}) => (
+          <PosterItem movie={item} onPress={() => onMoviePress?.(item)} />
+        )}
         ListEmptyComponent={() => (
           <View style={style.emptyContainer}>
             {Array.from({length: 5}).map((_, index) => (
