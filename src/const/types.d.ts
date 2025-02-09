@@ -16,6 +16,20 @@ interface ITheme {
   iconSecondary: string;
 }
 
+interface IRootStackParamList {
+  MovieList: {
+    title?: string;
+  };
+  MovieDetail: {
+    movieId: number;
+  };
+  Home: undefined;
+  Profile: undefined;
+  Search: undefined;
+  Notification: undefined;
+  [key: string]: undefined | object;
+}
+
 interface IUser {
   [key: string]: any;
   _id: string;

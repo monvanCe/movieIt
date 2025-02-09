@@ -19,9 +19,11 @@ import {moderateScale, horizontalScale} from '@src/styles/metricEngine';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import i18n from '@src/localization';
-import {RootStackParamList} from '@src/navigation/types';
-import type {RouteProp} from '@react-navigation/native';
+
 import useMovieList from '@src/hooks/useMovieList';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+type NavigationProp = NativeStackNavigationProp<IRootStackParamList>;
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -174,10 +176,15 @@ const TabBar = memo(function TabBar({
 const WatchlistTab = memo(function WatchlistTab() {
   const colors = theme.useTheme();
   const watchlist = useAppSelector(state => state.movieList.watchlist);
+  const navigation = useNavigation<NavigationProp>();
+
+  const handleMoviePress = (movie: IMovie) => {
+    navigation.navigate('MovieDetail', {movieId: movie.id});
+  };
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
-      <MovieList movies={watchlist} onPress={() => {}} />
+      <MovieList movies={watchlist} onPress={handleMoviePress} />
     </View>
   );
 });
@@ -185,10 +192,15 @@ const WatchlistTab = memo(function WatchlistTab() {
 const WatchedTab = memo(function WatchedTab() {
   const colors = theme.useTheme();
   const watched = useAppSelector(state => state.movieList.watched);
+  const navigation = useNavigation<NavigationProp>();
+
+  const handleMoviePress = (movie: IMovie) => {
+    navigation.navigate('MovieDetail', {movieId: movie.id});
+  };
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
-      <MovieList movies={watched} onPress={() => {}} />
+      <MovieList movies={watched} onPress={handleMoviePress} />
     </View>
   );
 });

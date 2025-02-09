@@ -3,7 +3,6 @@ import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '@src/navigation/types';
 
 import ImageStack from '@src/components/atoms/imageStack';
 import PrimaryText from '@src/components/atoms/primary-text';
@@ -18,12 +17,15 @@ import {
   componentSizes,
 } from '@src/styles/sizes';
 import theme from '@src/styles/theme';
-import {setSelectedList} from '@src/store/slices/movieListSlice';
+import {
+  setSelectedFriend,
+  setSelectedList,
+} from '@src/store/slices/movieListSlice';
 import i18n from '@src/localization';
 
 export default function UserLists() {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<IRootStackParamList>>();
   const dispatch = useDispatch();
   const {loadUserWatchList, loadUserWatched} = useMovies();
   const userWatchlist = useAppSelector(state => state.movies.user.watchlist);
@@ -40,8 +42,9 @@ export default function UserLists() {
   }, []);
 
   const handleListPress = (type: 'watchlist' | 'watched') => {
+    dispatch(setSelectedFriend(null));
     dispatch(setSelectedList(type));
-    navigation.navigate('MovieList');
+    navigation.navigate('MovieList', {});
   };
 
   return (

@@ -2,7 +2,6 @@ import {useEffect} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '@src/navigation/types';
 
 import ImageStack from '@src/components/atoms/imageStack';
 import PrimaryText from '@src/components/atoms/primary-text';
@@ -26,7 +25,7 @@ export default function Friendlist() {
   const {loadFriends} = useUser();
   const colors = theme.useTheme();
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<IRootStackParamList>>();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function Friendlist() {
   const handleListPress = (friendId: string, type: 'watchlist' | 'watched') => {
     dispatch(setSelectedFriend(friendId));
     dispatch(setSelectedList(type));
-    navigation.navigate('MovieList');
+    navigation.navigate('MovieList', {});
   };
 
   return (
