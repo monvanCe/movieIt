@@ -24,6 +24,7 @@ export default function ImageStack({images}: IImages) {
       );
     }
   }, [containerRef.current, images]);
+
   return (
     <View ref={containerRef} style={style.container}>
       {images.map((image, index) => (

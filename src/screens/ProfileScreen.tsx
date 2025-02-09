@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {FlatList, Text, TouchableOpacity, View, Image} from 'react-native';
 
 import Button from '@src/components/atoms/button';
@@ -8,6 +8,7 @@ import CustomInput from '@src/components/atoms/text-input';
 import CustomModal from '@src/components/molecules/customModal';
 import useToggle from '@src/hooks/useToggle';
 import useUser from '@src/hooks/useUser';
+import useMovies from '@src/hooks/useMovies';
 import {useAppSelector} from '@src/store/store';
 import {borderRadius, borderWidths, margins, paddings} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
@@ -18,13 +19,21 @@ export default function ProfileScreen() {
   const movies = useAppSelector(state => state.movies);
   const [newUser, setNewUser] = useState<Record<string, any> | null>(user);
   const {updateUser} = useUser();
+  const {loadUserWatchList, loadUserWatched} = useMovies();
+
+  useEffect(() => {
+    loadUserWatchList();
+    loadUserWatched();
+  }, []);
 
   const allWatchlistMovieCount =
-    movies.user.watchlist.length +
-    movies.friends.reduce((acc, f) => acc + f.watchlist.length, 0);
+    (movies?.user?.watchlist?.length || 0) +
+    (movies?.friends?.reduce((acc, f) => acc + (f.watchlist?.length || 0), 0) ||
+      0);
   const allWatchedMovieCount =
-    movies.user.watched.length +
-    movies.friends.reduce((acc, f) => acc + f.watched.length, 0);
+    (movies?.user?.watched?.length || 0) +
+    (movies?.friends?.reduce((acc, f) => acc + (f.watched?.length || 0), 0) ||
+      0);
 
   const colors = theme.useTheme();
   const {toggle, isToggle} = useToggle();

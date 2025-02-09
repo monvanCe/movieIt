@@ -1,32 +1,24 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '@src/navigation/types';
 
-import CustomModal from '@src/components/molecules/customModal';
-import MovieList from '@src/components/molecules/movieList';
-import UserList from '@src/components/molecules/userList';
-import {highResImage, lowResImage} from '@src/const/imageSources';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import ImageStack from '@src/components/atoms/imageStack';
+import PrimaryText from '@src/components/atoms/primary-text';
+import SecondaryText from '@src/components/atoms/secondary-text';
+import {lowResImage} from '@src/const/imageSources';
 import useMovies from '@src/hooks/useMovies';
-import useToggle from '@src/hooks/useToggle';
-
 import {useAppSelector} from '@src/store/store';
-import {borderRadius, fontSizes, margins, paddings} from '@src/styles/sizes';
+import {borderRadius, margins, paddings} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
-
-const {width} = Dimensions.get('window');
+import {setSelectedList} from '@src/store/slices/movieListSlice';
 
 export default function UserLists() {
-  const [modalContent, setModalContent] = useState<number>(0);
-  const [selectedMovie, setSelectedMovie] = useState<IMovie | null>(null);
-
-  const {toggle, isToggle} = useToggle();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const dispatch = useDispatch();
   const {loadUserWatchList, loadUserWatched} = useMovies();
   const userWatchlist = useAppSelector(state => state.movies.user.watchlist);
   const userWatched = useAppSelector(state => state.movies.user.watched);
@@ -41,101 +33,65 @@ export default function UserLists() {
     loadUserWatched();
   }, []);
 
-  const renderMovieDetail = () => (
-    <View style={{flex: 1}}>
-      {selectedMovie && (
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              flatListRef.current?.scrollToIndex({index: 0});
-            }}>
-            <Ionicons
-              name="chevron-back"
-              size={30}
-              color={colors.primary}
-              style={{margin: paddings.medium}}
-            />
-          </TouchableOpacity>
-          <Image
-            source={{uri: highResImage(selectedMovie.posterPath)}}
-            style={{
-              width: '100%',
-              aspectRatio: 2,
-              borderRadius: borderRadius.medium,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: fontSizes.large,
-              color: colors.primaryText,
-              marginTop: margins.medium,
-            }}>
-            {selectedMovie.title}
-          </Text>
-          <Text
-            style={{
-              fontSize: fontSizes.medium,
-              color: colors.secondaryText,
-              marginTop: margins.small,
-            }}>
-            {selectedMovie.overview}
-          </Text>
-        </>
-      )}
-    </View>
-  );
-
-  const flatListRef = useRef<FlatList>(null);
+  const handleListPress = (type: 'watchlist' | 'watched') => {
+    dispatch(setSelectedList(type));
+    navigation.navigate('MovieList');
+  };
 
   return (
-    <View style={{flexDirection: 'row', gap: paddings.small}}>
-      <View style={{width: '33%'}}>
-        <UserList
-          images={watchListImages}
-          text="İzlenecekler"
-          onPress={() => {
-            setModalContent(0);
-            toggle();
-          }}
-        />
-      </View>
-      <View style={{width: '33%'}}>
-        <UserList
-          images={watchedImages}
-          text="İzlenenler"
-          onPress={() => {
-            setModalContent(1);
-            toggle();
-          }}
-        />
-      </View>
-      <CustomModal height="100%" visible={isToggle} onPress={toggle}>
-        <View style={{flex: 1}}>
-          <FlatList
-            ref={flatListRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled
-            data={[{key: 'list'}, {key: 'details'}]}
-            renderItem={({item}) => (
-              <View style={{width: width - 2 * paddings.medium}}>
-                {item.key === 'list' ? (
-                  <MovieList
-                    movies={modalContent === 0 ? userWatchlist : userWatched}
-                    onPress={movie => {
-                      setSelectedMovie(movie);
-                      flatListRef.current?.scrollToIndex({index: 1});
-                    }}
-                  />
-                ) : (
-                  renderMovieDetail()
-                )}
-              </View>
-            )}
-          />
+    <View style={styles.listsContainer}>
+      <TouchableOpacity
+        style={[styles.listItem, {backgroundColor: colors.surface}]}
+        onPress={() => handleListPress('watchlist')}>
+        <View>
+          <PrimaryText style={styles.listTitle}>İzlenecekler</PrimaryText>
+          <SecondaryText style={styles.listCount}>
+            {userWatchlist.length} film
+          </SecondaryText>
         </View>
-      </CustomModal>
+        <View style={styles.imageContainer}>
+          <ImageStack images={watchListImages.slice(0, 3)} />
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.listItem, {backgroundColor: colors.surface}]}
+        onPress={() => handleListPress('watched')}>
+        <View>
+          <PrimaryText style={styles.listTitle}>İzlenenler</PrimaryText>
+          <SecondaryText style={styles.listCount}>
+            {userWatched.length} film
+          </SecondaryText>
+        </View>
+        <View style={styles.imageContainer}>
+          <ImageStack images={watchedImages.slice(0, 3)} />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  listsContainer: {
+    gap: paddings.medium,
+    marginBottom: margins.large,
+  },
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: paddings.medium,
+    borderRadius: borderRadius.medium,
+  },
+  listTitle: {
+    fontWeight: '600',
+    marginBottom: margins.small,
+  },
+  listCount: {
+    opacity: 0.8,
+  },
+  imageContainer: {
+    width: 90,
+    height: 60,
+  },
+});

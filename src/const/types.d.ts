@@ -58,6 +58,7 @@ interface IOnPress {
 
 interface IImages {
   images: string[];
+  size?: number;
 }
 
 interface IText {

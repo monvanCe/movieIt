@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, Image} from 'react-native';
 
 import PrimaryText from '@src/components/atoms/primary-text';

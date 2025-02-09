@@ -282,7 +282,6 @@ export const deleteUserMovieService = async (movieId: string) => {
   }
 };
 
-// App config endpoints
 export const getConfigListService = async () => {
   try {
     const response = await getRequest('internal', endPoints.getConfigList);
