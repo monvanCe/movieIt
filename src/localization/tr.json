@@ -8,5 +8,11 @@
   "popular": "Popüler Filmler",
   "topRated": "En Çok Beğenilenler",
   "nowPlaying": "Şu An Vizyonda",
-  "unmatchedRoute": "Yolunu kaybetmişe benziyorsun! Eve gitmek için tıkla"
+  "unmatchedRoute": "Yolunu kaybetmişe benziyorsun! Eve gitmek için tıkla",
+  "watchlist": "İzlenecekler",
+  "watched": "İzlenenler",
+  "movies": "film",
+  "friendWatchlist": "Beraber İzlenecekler",
+  "friendWatched": "Beraber İzlenenler",
+  "noNotifications": "Henüz bildirim yok"
 }

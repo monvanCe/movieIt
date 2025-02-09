@@ -92,13 +92,14 @@ interface IToken {
 interface INotification {
   _id: string;
   type: notificationTypes;
-  from: any;
-  to: any;
+  from: IUser;
+  to: IUser;
   status: string;
   message: string;
   createdAt: string;
   movie: any;
   updatedAt: string;
-  image?: string;
-  subTitle?: string;
+  image: string;
+  subTitle: string;
+  movieType?: string;
 }

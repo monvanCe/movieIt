@@ -16,8 +16,12 @@ import {
 } from '@react-navigation/material-top-tabs';
 import sizes from '@src/styles/sizes';
 import {moderateScale, horizontalScale} from '@src/styles/metricEngine';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import i18n from '@src/localization';
+import {RootStackParamList} from '@src/navigation/types';
+import type {RouteProp} from '@react-navigation/native';
+import useMovieList from '@src/hooks/useMovieList';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -84,6 +88,16 @@ const styles = StyleSheet.create({
 const Header = memo(function Header() {
   const navigation = useNavigation();
   const colors = theme.useTheme();
+  const ownerName = useAppSelector(state => state.movieList.ownerName);
+  const selectedList = useAppSelector(state => state.movieList.selectedList);
+  const title =
+    ownerName === 'me'
+      ? selectedList === 'watchlist'
+        ? i18n.t('watchlist')
+        : i18n.t('watched')
+      : selectedList === 'watchlist'
+      ? i18n.t('friendWatchlist')
+      : i18n.t('friendWatched');
 
   return (
     <View style={styles.header}>
@@ -92,7 +106,7 @@ const Header = memo(function Header() {
         onPress={() => navigation.goBack()}>
         <Icon name="arrow-left" size={20} color={colors.primaryText} />
       </TouchableOpacity>
-      <Text style={[styles.title, {color: colors.primaryText}]}>My Lists</Text>
+      <Text style={[styles.title, {color: colors.primaryText}]}>{title}</Text>
     </View>
   );
 });
@@ -159,7 +173,7 @@ const TabBar = memo(function TabBar({
 
 const WatchlistTab = memo(function WatchlistTab() {
   const colors = theme.useTheme();
-  const watchlist = useAppSelector(state => state.movies.user.watchlist);
+  const watchlist = useAppSelector(state => state.movieList.watchlist);
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
@@ -170,7 +184,7 @@ const WatchlistTab = memo(function WatchlistTab() {
 
 const WatchedTab = memo(function WatchedTab() {
   const colors = theme.useTheme();
-  const watched = useAppSelector(state => state.movies.user.watched);
+  const watched = useAppSelector(state => state.movieList.watched);
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
@@ -182,6 +196,11 @@ const WatchedTab = memo(function WatchedTab() {
 export default function MovieListScreen() {
   const colors = theme.useTheme();
   const selectedList = useAppSelector(state => state.movieList.selectedList);
+  const {loadMovieList} = useMovieList();
+
+  useEffect(() => {
+    loadMovieList();
+  }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: colors.background}}>

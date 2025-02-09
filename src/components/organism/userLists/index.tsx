@@ -11,9 +11,15 @@ import SecondaryText from '@src/components/atoms/secondary-text';
 import {lowResImage} from '@src/const/imageSources';
 import useMovies from '@src/hooks/useMovies';
 import {useAppSelector} from '@src/store/store';
-import {borderRadius, margins, paddings} from '@src/styles/sizes';
+import {
+  borderRadius,
+  margins,
+  paddings,
+  componentSizes,
+} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
 import {setSelectedList} from '@src/store/slices/movieListSlice';
+import i18n from '@src/localization';
 
 export default function UserLists() {
   const navigation =
@@ -44,9 +50,11 @@ export default function UserLists() {
         style={[styles.listItem, {backgroundColor: colors.surface}]}
         onPress={() => handleListPress('watchlist')}>
         <View>
-          <PrimaryText style={styles.listTitle}>İzlenecekler</PrimaryText>
+          <PrimaryText style={styles.listTitle}>
+            {i18n.t('watchlist')}
+          </PrimaryText>
           <SecondaryText style={styles.listCount}>
-            {userWatchlist.length} film
+            {userWatchlist.length} {i18n.t('movies')}
           </SecondaryText>
         </View>
         <View style={styles.imageContainer}>
@@ -58,9 +66,11 @@ export default function UserLists() {
         style={[styles.listItem, {backgroundColor: colors.surface}]}
         onPress={() => handleListPress('watched')}>
         <View>
-          <PrimaryText style={styles.listTitle}>İzlenenler</PrimaryText>
+          <PrimaryText style={styles.listTitle}>
+            {i18n.t('watched')}
+          </PrimaryText>
           <SecondaryText style={styles.listCount}>
-            {userWatched.length} film
+            {userWatched.length} {i18n.t('movies')}
           </SecondaryText>
         </View>
         <View style={styles.imageContainer}>
@@ -91,7 +101,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   imageContainer: {
-    width: 90,
-    height: 60,
+    width: componentSizes.image.small,
+    height: componentSizes.image.thumbnail,
   },
 });

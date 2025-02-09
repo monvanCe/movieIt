@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import Avatar from '@src/components/atoms/avatar';
 import PrimaryText from '@src/components/atoms/primary-text';
 import SecondaryText from '@src/components/atoms/secondary-text';
-import {paddings, margins, fontSizes} from '@src/styles/sizes';
+import {paddings, margins, fontSizes, componentSizes} from '@src/styles/sizes';
 
 interface HeaderProps {
   userName: string;
@@ -25,7 +25,7 @@ export default function Header({
   return (
     <View style={styles.container}>
       <View style={styles.userInfoContainer}>
-        <Avatar size={100} avatarId={avatarId} />
+        <Avatar size={componentSizes.avatar.xlarge} avatarId={avatarId} />
         <View style={styles.userTextContainer}>
           <PrimaryText style={styles.userName}>{userName}</PrimaryText>
           {bio && <SecondaryText style={styles.userBio}>{bio}</SecondaryText>}
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userName: {
-    fontSize: fontSizes.large,
+    fontSize: fontSizes.xlarge,
     fontWeight: 'bold',
     marginBottom: margins.small,
   },
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statNumber: {
-    fontSize: fontSizes.medium,
+    fontSize: fontSizes.large,
     fontWeight: 'bold',
   },
   statLabel: {
     fontSize: fontSizes.small,
-    marginTop: margins.small / 2,
+    marginTop: margins.xsmall,
   },
 });

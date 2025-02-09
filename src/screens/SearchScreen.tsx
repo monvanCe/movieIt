@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
   Image,
+  StyleSheet,
+  Animated,
 } from 'react-native';
 
 import SearchButton from '@src/components/atoms/searchButton';
@@ -28,6 +30,7 @@ import {
   paddings,
 } from '@src/styles/sizes';
 import theme from '@src/styles/theme';
+import i18n from '@src/localization';
 
 export default function SearchScreen() {
   const user = useAppSelector(state => state.auth.currentUser);
@@ -43,6 +46,8 @@ export default function SearchScreen() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const width = Dimensions.get('window').width;
   const friends = useAppSelector(state => state.movies.friends);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
   const addItems = [
     {name: user?.userName, type: 0, avatar: user?.avatarId},
     {name: user?.userName, type: 1, avatar: user?.avatarId},
@@ -69,95 +74,75 @@ export default function SearchScreen() {
     const time = setTimeout(async () => {
       const movies = await searchMovies(searchTerm);
       setSearchedMovies(movies);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }, 1000);
 
     return () => clearTimeout(time);
   }, [searchTerm]);
 
   const renderMovieList = () => (
-    <FlashList
-      data={searchedMovies}
-      renderItem={({item, index}: {item: IMovie; index: number}) => (
-        <>
+    <Animated.View style={{opacity: fadeAnim, flex: 1}}>
+      <FlashList
+        data={searchedMovies}
+        renderItem={({item, index}: {item: IMovie; index: number}) => (
           <TouchableOpacity
             onPress={() => {
               setSelectedMovie(item);
               flatListRef.current?.scrollToIndex({index: 1});
               setCurrentPage(1);
             }}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: index === 0 ? margins.small : 0,
-            }}>
+            style={styles.movieItem}>
             <Image
               source={{uri: lowResImage(item.posterPath)}}
-              style={{
-                height: 75,
-                aspectRatio: 9 / 13.5,
-                marginRight: paddings.small,
-              }}
+              style={styles.moviePoster}
             />
-            <View>
-              <Text style={{color: colors.primaryText, fontWeight: 'bold'}}>
+            <View style={styles.movieInfo}>
+              <Text style={[styles.movieTitle, {color: colors.primaryText}]}>
                 {item.title}
               </Text>
-              <Text style={{color: colors.secondaryText}}>
+              <Text style={[styles.movieDate, {color: colors.secondaryText}]}>
                 {item.releaseDate}
+              </Text>
+              <Text
+                numberOfLines={2}
+                style={[styles.movieOverview, {color: colors.tertiaryText}]}>
+                {item.overview}
               </Text>
             </View>
           </TouchableOpacity>
-          <View
-            style={{
-              height: 1,
-              backgroundColor: colors.divider,
-              marginVertical: margins.small,
-            }}
-          />
-        </>
-      )}
-      keyExtractor={item => item.id.toString()}
-      estimatedItemSize={100}
-    />
+        )}
+        keyExtractor={item => item.id.toString()}
+        estimatedItemSize={100}
+        keyboardShouldPersistTaps="handled"
+        ItemSeparatorComponent={() => (
+          <View style={[styles.separator, {backgroundColor: colors.divider}]} />
+        )}
+      />
+    </Animated.View>
   );
 
   const renderMovieDetail = () => (
-    <View style={{flex: 1}}>
+    <View style={styles.detailContainer}>
       {selectedMovie && (
         <>
           <TouchableOpacity
             onPress={() => {
               flatListRef.current?.scrollToIndex({index: 0});
               setCurrentPage(0);
-            }}>
-            <Ionicons
-              name="chevron-back"
-              size={30}
-              color={colors.primary}
-              style={{margin: paddings.medium}}
-            />
+            }}
+            style={styles.backButton}>
+            <Ionicons name="chevron-back" size={30} color={colors.primary} />
           </TouchableOpacity>
           <Image
             source={{uri: highResImage(selectedMovie.posterPath)}}
-            style={{
-              width: '100%',
-              aspectRatio: 2,
-              borderRadius: borderRadius.medium,
-            }}
+            style={styles.detailPoster}
           />
-          <View
-            style={{
-              flexDirection: 'row',
-              zIndex: 10,
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: fontSizes.large,
-                color: colors.primaryText,
-                marginTop: margins.medium,
-                flex: 1,
-              }}>
+          <View style={styles.detailHeader}>
+            <Text style={[styles.detailTitle, {color: colors.primaryText}]}>
               {selectedMovie.title}
             </Text>
 
@@ -165,33 +150,18 @@ export default function SearchScreen() {
               onPress={() => {
                 flatListRef.current?.scrollToIndex({index: 2});
                 setCurrentPage(2);
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: margins.medium,
-                  borderWidth: borderWidths.small,
-                  borderColor: colors.tertiaryText,
-                  borderRadius: borderRadius.medium,
-                  paddingHorizontal: paddings.medium,
-                  flexDirection: 'row',
-                }}>
-                <Ionicons
-                  name="add-circle"
-                  size={24}
-                  color={colors.primaryText}
-                  style={{marginLeft: 'auto', margin: paddings.medium}}
-                />
-                <SecondaryText>Add</SecondaryText>
-              </View>
+              }}
+              style={[styles.addButton, {borderColor: colors.tertiaryText}]}>
+              <Ionicons
+                name="add-circle"
+                size={24}
+                color={colors.primaryText}
+                style={{marginRight: paddings.small}}
+              />
+              <SecondaryText>Add</SecondaryText>
             </TouchableOpacity>
           </View>
-          <Text
-            style={{
-              fontSize: fontSizes.medium,
-              color: colors.secondaryText,
-              marginTop: margins.small,
-            }}>
+          <Text style={[styles.detailOverview, {color: colors.secondaryText}]}>
             {selectedMovie.overview}
           </Text>
         </>
@@ -200,47 +170,28 @@ export default function SearchScreen() {
   );
 
   const renderAddList = () => (
-    <View style={{flex: 1}}>
+    <View style={styles.addListContainer}>
       <TouchableOpacity
         onPress={() => {
           flatListRef.current?.scrollToIndex({index: 1});
           setCurrentPage(1);
-        }}>
-        <Ionicons
-          name="chevron-back"
-          size={30}
-          color={colors.primary}
-          style={{margin: paddings.medium}}
-        />
+        }}
+        style={styles.backButton}>
+        <Ionicons name="chevron-back" size={30} color={colors.primary} />
       </TouchableOpacity>
       <FlashList
         data={addItems}
+        keyboardShouldPersistTaps="handled"
         renderItem={({item, index}: {item: any; index: number}) => (
           <TouchableOpacity
             onPress={() => {
               setSelectedItem(item);
               handleAddButton();
             }}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: index === 0 ? margins.small : 0,
-              borderWidth: borderWidths.small,
-              borderColor: colors.divider,
-              padding: paddings.medium,
-              borderRadius: borderRadius.medium,
-              marginVertical: margins.small,
-            }}>
-            <Image
-              source={{uri: item.avatar}}
-              style={{
-                height: 50,
-                aspectRatio: 1,
-                marginRight: paddings.medium,
-              }}
-            />
-            <Text style={{color: colors.primaryText, fontWeight: 'bold'}}>
-              {item.name === user?.userName ? item.name + '(You)' : item.name}
+            style={[styles.addListItem, {borderColor: colors.divider}]}>
+            <Image source={{uri: item.avatar}} style={styles.avatarImage} />
+            <Text style={[styles.userName, {color: colors.primaryText}]}>
+              {item.name === user?.userName ? item.name + ' (You)' : item.name}
             </Text>
             <Ionicons
               name={
@@ -254,7 +205,7 @@ export default function SearchScreen() {
                   ? colors.warning
                   : colors.success
               }
-              style={{marginLeft: 'auto'}}
+              style={styles.actionIcon}
             />
           </TouchableOpacity>
         )}
@@ -285,47 +236,63 @@ export default function SearchScreen() {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-      }}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       <SearchButton onPress={toggle} />
 
-      <View
-        style={{
-          flex: 1,
-          marginTop: margins.small,
-        }}>
+      <View style={styles.bannerContainer}>
         <BannerMovies />
       </View>
 
       <CustomModal visible={isToggle} onPress={close} height={'100%'}>
-        <TextInput
-          style={{
-            marginTop: 16,
-            height: 40,
-            borderColor: 'gray',
-            borderWidth: 1,
-            width: '100%',
-            borderRadius: 8,
-            paddingHorizontal: 16,
-            color: colors.primaryText,
-          }}
-          placeholder="Search"
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-        />
-        <View style={{flex: 1}}>
+        <View
+          style={[
+            styles.searchInputContainer,
+            {
+              borderColor: colors.divider,
+              backgroundColor: colors.surface,
+            },
+          ]}>
+          <Ionicons
+            name="search"
+            size={20}
+            color={colors.tertiaryText}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={[
+              {
+                flex: 1,
+                color: colors.primaryText,
+                fontSize: fontSizes.medium,
+              },
+            ]}
+            placeholder={i18n.t('search')}
+            placeholderTextColor={colors.tertiaryText}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+            autoFocus
+          />
+          {searchTerm.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchTerm('')}>
+              <Ionicons
+                name="close-circle"
+                size={20}
+                color={colors.tertiaryText}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.modalContent}>
           <FlatList
             ref={flatListRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             scrollEnabled
+            keyboardShouldPersistTaps="handled"
             data={[{key: 'list'}, {key: 'details'}, {key: 'add'}]}
             renderItem={({item}) => (
-              <View style={{width: width - 2 * paddings.medium}}>
+              <View style={[styles.page, {width: width - 2 * paddings.medium}]}>
                 {item.key === 'list' && renderMovieList()}
                 {item.key === 'details' && renderMovieDetail()}
                 {item.key === 'add' && renderAddList()}
@@ -337,3 +304,141 @@ export default function SearchScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  bannerContainer: {
+    flex: 1,
+    marginTop: margins.small,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: borderRadius.medium,
+    paddingHorizontal: paddings.medium,
+    marginHorizontal: paddings.medium,
+    marginTop: margins.medium,
+    borderWidth: borderWidths.small,
+  },
+  searchIcon: {
+    marginRight: margins.small,
+  },
+  modalContent: {
+    flex: 1,
+    marginTop: margins.medium,
+  },
+  page: {
+    flex: 1,
+  },
+  movieItem: {
+    flexDirection: 'row',
+    padding: paddings.medium,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: borderRadius.medium,
+  },
+  moviePoster: {
+    height: 150,
+    width: 100,
+    borderRadius: borderRadius.medium,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  movieInfo: {
+    flex: 1,
+    marginLeft: margins.medium,
+    justifyContent: 'space-between',
+    height: 150,
+  },
+  movieTitle: {
+    fontSize: fontSizes.medium,
+    fontWeight: 'bold',
+    marginBottom: margins.small,
+  },
+  movieDate: {
+    fontSize: fontSizes.small,
+    marginBottom: margins.small,
+  },
+  movieOverview: {
+    fontSize: fontSizes.small,
+    lineHeight: 20,
+  },
+  separator: {
+    height: 1,
+    marginHorizontal: margins.medium,
+    marginVertical: margins.small,
+  },
+  detailContainer: {
+    flex: 1,
+  },
+  backButton: {
+    padding: paddings.medium,
+  },
+  detailPoster: {
+    width: '100%',
+    height: 300,
+    borderRadius: borderRadius.medium,
+    marginBottom: margins.medium,
+  },
+  detailHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: margins.medium,
+    paddingHorizontal: paddings.medium,
+  },
+  detailTitle: {
+    flex: 1,
+    fontSize: fontSizes.large,
+    fontWeight: 'bold',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: borderWidths.small,
+    borderRadius: borderRadius.medium,
+    padding: paddings.medium,
+    backgroundColor: 'transparent',
+  },
+  detailOverview: {
+    fontSize: fontSizes.medium,
+    marginTop: margins.medium,
+    paddingHorizontal: paddings.medium,
+    lineHeight: 24,
+  },
+  addListContainer: {
+    flex: 1,
+    paddingHorizontal: paddings.medium,
+  },
+  addListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: borderWidths.small,
+    padding: paddings.medium,
+    borderRadius: borderRadius.medium,
+    marginVertical: margins.small,
+    backgroundColor: 'transparent',
+  },
+  avatarImage: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    marginRight: margins.medium,
+  },
+  userName: {
+    flex: 1,
+    fontSize: fontSizes.medium,
+    fontWeight: 'bold',
+  },
+  actionIcon: {
+    marginLeft: margins.small,
+  },
+});

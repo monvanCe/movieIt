@@ -3,13 +3,17 @@ import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 interface MovieListState {
   selectedList: 'watchlist' | 'watched';
   selectedFriend: string | null;
-  movies: IMovie[];
+  ownerName: string;
+  watchlist: IMovie[];
+  watched: IMovie[];
 }
 
 const initialState: MovieListState = {
   selectedList: 'watchlist',
   selectedFriend: null,
-  movies: [],
+  ownerName: 'me',
+  watchlist: [],
+  watched: [],
 };
 
 export const movieListSlice = createSlice({
@@ -25,12 +29,23 @@ export const movieListSlice = createSlice({
     setSelectedFriend: (state, action: PayloadAction<string | null>) => {
       state.selectedFriend = action.payload;
     },
-    setMovies: (state, action: PayloadAction<IMovie[]>) => {
-      state.movies = action.payload;
+    setOwnerName: (state, action: PayloadAction<string>) => {
+      state.ownerName = action.payload;
+    },
+    setWatchlist: (state, action: PayloadAction<IMovie[]>) => {
+      state.watchlist = action.payload;
+    },
+    setWatched: (state, action: PayloadAction<IMovie[]>) => {
+      state.watched = action.payload;
     },
   },
 });
 
-export const {setSelectedList, setSelectedFriend, setMovies} =
-  movieListSlice.actions;
+export const {
+  setSelectedList,
+  setSelectedFriend,
+  setOwnerName,
+  setWatchlist,
+  setWatched,
+} = movieListSlice.actions;
 export default movieListSlice.reducer;

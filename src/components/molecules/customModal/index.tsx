@@ -7,9 +7,10 @@ import {
   PanResponder,
   PanResponderGestureState,
   Platform,
-  ScrollView,
   TouchableOpacity,
   View,
+  Animated,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -42,6 +43,40 @@ export default function CustomModal({
   const colors = theme.useTheme();
   const style = React.useMemo(() => styles(colors), [colors]);
   const [changeY, setChangeY] = React.useState(0);
+  const slideAnim = React.useRef(new Animated.Value(0)).current;
+  const overlayOpacity = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.spring(slideAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          damping: 15,
+          mass: 0.8,
+        }),
+        Animated.timing(overlayOpacity, {
+          toValue: 0.5,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          useNativeDriver: true,
+          damping: 15,
+          mass: 0.8,
+        }),
+        Animated.timing(overlayOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible]);
 
   const handleMove = (
     event: GestureResponderEvent,
@@ -63,35 +98,49 @@ export default function CustomModal({
     onPanResponderRelease: handleRelease,
   });
 
-  return (
-    <>
-      <Modal
-        statusBarTranslucent
-        animationType="slide"
-        transparent
-        visible={visible}>
-        <TouchableOpacity
-          style={{flex: 1, backgroundColor: 'black', opacity: 0.1}}
-          onPress={onPress}
-        />
+  const translateY = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [containerHeight, 0],
+  });
 
-        <View {...pandResponser.panHandlers} style={style.modalContainer}>
-          <View
-            style={{
-              height: containerHeight - changeY,
-              maxHeight:
-                windowHeight - (Platform.OS === 'ios' ? insets.top : 0),
-              paddingHorizontal: paddings.medium,
-              paddingBottom: insets.bottom,
-            }}>
-            <View style={style.iconButtonContainer}>
-              <View style={style.modalSlider} />
-              <IconButton icon="close" onPress={onPress} />
-            </View>
-            {children}
+  return (
+    <Modal
+      statusBarTranslucent
+      transparent
+      visible={visible}
+      animationType="none">
+      <Animated.View
+        style={[
+          style.modalOverlay,
+          {
+            opacity: overlayOpacity,
+          },
+        ]}>
+        <TouchableOpacity style={{flex: 1}} onPress={onPress} />
+      </Animated.View>
+
+      <Animated.View
+        {...pandResponser.panHandlers}
+        style={[
+          style.modalContainer,
+          {
+            transform: [{translateY}],
+          },
+        ]}>
+        <View
+          style={{
+            height: containerHeight - changeY,
+            maxHeight: windowHeight - (Platform.OS === 'ios' ? insets.top : 0),
+            paddingHorizontal: paddings.medium,
+            paddingBottom: insets.bottom,
+          }}>
+          <View style={style.iconButtonContainer}>
+            <View style={style.modalSlider} />
+            <IconButton icon="close" onPress={onPress} />
           </View>
+          {children}
         </View>
-      </Modal>
-    </>
+      </Animated.View>
+    </Modal>
   );
 }

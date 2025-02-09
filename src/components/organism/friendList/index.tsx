@@ -19,6 +19,7 @@ import {
   setSelectedFriend,
   setSelectedList,
 } from '@src/store/slices/movieListSlice';
+import i18n from '@src/localization';
 
 export default function Friendlist() {
   const friends = useAppSelector(state => state.movies.friends);
@@ -35,10 +36,7 @@ export default function Friendlist() {
   const handleListPress = (friendId: string, type: 'watchlist' | 'watched') => {
     dispatch(setSelectedFriend(friendId));
     dispatch(setSelectedList(type));
-    navigation.navigate('MovieList', {
-      title:
-        type === 'watchlist' ? 'Beraber İzlenecekler' : 'Beraber İzlenenler',
-    });
+    navigation.navigate('MovieList');
   };
 
   return (
@@ -65,7 +63,7 @@ export default function Friendlist() {
                   />
                 </View>
                 <SecondaryText style={styles.listLabel}>
-                  Beraber İzlenecekler ({item.watchlist.length})
+                  {i18n.t('friendWatchlist')} ({item.watchlist.length})
                 </SecondaryText>
               </TouchableOpacity>
 
@@ -82,7 +80,7 @@ export default function Friendlist() {
                   />
                 </View>
                 <SecondaryText style={styles.listLabel}>
-                  Beraber İzlenenler ({item.watched.length})
+                  {i18n.t('friendWatched')} ({item.watched.length})
                 </SecondaryText>
               </TouchableOpacity>
             </View>

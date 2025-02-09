@@ -12,7 +12,7 @@ export default function HorizontalList({movies}: IMovies) {
   const style = React.useMemo(() => styles(colors), [colors]);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={style.container}>
       <FlatList
         showsHorizontalScrollIndicator={false}
         data={movies}
@@ -20,7 +20,7 @@ export default function HorizontalList({movies}: IMovies) {
         horizontal
         renderItem={({item}) => <PosterItem movie={item} />}
         ListEmptyComponent={() => (
-          <View style={{flexDirection: 'row'}}>
+          <View style={style.emptyContainer}>
             {Array.from({length: 5}).map((_, index) => (
               <SkeletonItem key={index} />
             ))}

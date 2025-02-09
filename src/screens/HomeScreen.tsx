@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 
 import Friendlist from '@src/components/organism/friendList';
 import UserLists from '@src/components/organism/userLists';
@@ -25,14 +25,19 @@ export default function HomeScreen() {
 
   const friends = useAppSelector(state => state.movies.friends);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: paddings.medium,
+    },
+  });
+
   return (
-    <ScrollView
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-      }}
-      showsVerticalScrollIndicator={false}>
-      <View style={{padding: paddings.medium}}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.content}>
         <Header
           userName={currentUser?.userName || ''}
           bio={currentUser?.bio}
