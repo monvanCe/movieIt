@@ -14,5 +14,12 @@
   "movies": "film",
   "friendWatchlist": "Beraber İzlenecekler",
   "friendWatched": "Beraber İzlenenler",
-  "noNotifications": "Henüz bildirim yok"
+  "noNotifications": "Henüz bildirim yok",
+  "toWatch": "İzlenecek",
+  "friends": "Arkadaşlar",
+  "friend": "Arkadaş",
+  "recoveryKey": "Kurtarma Anahtarı",
+  "bio": "Biyografi",
+  "username": "Kullanıcı Adı",
+  "avatar": "Profil Resmi"
 }

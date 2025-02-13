@@ -27,6 +27,7 @@ interface IRootStackParamList {
   Profile: undefined;
   Search: undefined;
   Notification: undefined;
+  Chat: undefined;
   [key: string]: undefined | object;
 }
 

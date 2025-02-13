@@ -14,5 +14,12 @@
   "movies": "movies",
   "friendWatchlist": "Watch Together",
   "friendWatched": "Watched Together",
-  "noNotifications": "No notifications yet"
+  "noNotifications": "No notifications yet",
+  "toWatch": "To Watch",
+  "friends": "Friends",
+  "friend": "Friend",
+  "recoveryKey": "Recovery Key",
+  "bio": "Bio",
+  "username": "Username",
+  "avatar": "Avatar"
 }

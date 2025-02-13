@@ -4,6 +4,7 @@ import Avatar from '@src/components/atoms/avatar';
 import PrimaryText from '@src/components/atoms/primary-text';
 import SecondaryText from '@src/components/atoms/secondary-text';
 import {paddings, margins, fontSizes, componentSizes} from '@src/styles/sizes';
+import i18n from '@src/localization';
 
 interface HeaderProps {
   userName: string;
@@ -34,19 +35,25 @@ export default function Header({
               <PrimaryText style={styles.statNumber}>
                 {watchlistCount}
               </PrimaryText>
-              <SecondaryText style={styles.statLabel}>İzlenecek</SecondaryText>
+              <SecondaryText style={styles.statLabel}>
+                {i18n.t('toWatch')}
+              </SecondaryText>
             </View>
             <View style={styles.statItem}>
               <PrimaryText style={styles.statNumber}>
                 {watchedCount}
               </PrimaryText>
-              <SecondaryText style={styles.statLabel}>İzlendi</SecondaryText>
+              <SecondaryText style={styles.statLabel}>
+                {i18n.t('watched')}
+              </SecondaryText>
             </View>
             <View style={styles.statItem}>
               <PrimaryText style={styles.statNumber}>
                 {friendsCount}
               </PrimaryText>
-              <SecondaryText style={styles.statLabel}>Arkadaş</SecondaryText>
+              <SecondaryText style={styles.statLabel}>
+                {i18n.t('friend')}
+              </SecondaryText>
             </View>
           </View>
         </View>

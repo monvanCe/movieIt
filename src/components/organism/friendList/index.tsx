@@ -2,7 +2,6 @@ import {useEffect} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
 import ImageStack from '@src/components/atoms/imageStack';
 import PrimaryText from '@src/components/atoms/primary-text';
 import SecondaryText from '@src/components/atoms/secondary-text';
@@ -41,7 +40,7 @@ export default function Friendlist() {
   return (
     <View style={{flex: 1}}>
       <View style={styles.header}>
-        <PrimaryText style={styles.title}>Arkadaşlar</PrimaryText>
+        <PrimaryText style={styles.title}>{i18n.t('friends')}</PrimaryText>
         <AddFriend />
       </View>
       <FlashList

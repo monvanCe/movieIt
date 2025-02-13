@@ -12,6 +12,7 @@ import ProfileScreen from '@src/screens/ProfileScreen';
 import SearchScreen from '@src/screens/SearchScreen';
 import MovieListScreen from '@src/screens/MovieListScreen';
 import MovieDetailScreen from '@src/screens/MovieDetailScreen';
+import ChatScreen from '@src/screens/ChatScreen';
 import {Provider} from 'react-redux';
 import {store, useAppSelector} from '@src/store/store';
 import {useAuth} from '@src/hooks/useAuth';
@@ -154,6 +155,7 @@ function AppLayout() {
           <Stack.Screen name="Tabs" component={TabNavigator} />
           <Stack.Screen name="MovieList" component={MovieListScreen} />
           <Stack.Screen name="MovieDetail" component={MovieDetailScreen} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </theme.ThemeProvider>

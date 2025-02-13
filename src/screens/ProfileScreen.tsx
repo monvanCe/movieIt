@@ -22,6 +22,7 @@ import {useAppSelector} from '@src/store/store';
 import {borderRadius, borderWidths, margins, paddings} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
 import {toastMessage} from '@src/utils/toastMessage';
+import i18n from '@src/localization';
 
 export default function ProfileScreen() {
   const user = useAppSelector(state => state.auth.currentUser);
@@ -126,7 +127,7 @@ export default function ProfileScreen() {
     },
     statsContainer: {
       width: '90%',
-      marginTop: margins.large,
+      marginTop: margins.large * 2,
       flexDirection: 'row',
       backgroundColor: colors.surface,
       borderRadius: borderRadius.large,
@@ -287,24 +288,24 @@ export default function ProfileScreen() {
             <SecondaryText style={styles.recoveryKey}>
               {'#' + user?.rollbackId}
             </SecondaryText>
-            <Text style={styles.recoveryText}>Recovery Key</Text>
+            <Text style={styles.recoveryText}>{i18n.t('recoveryKey')}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>{allWatchlistMovieCount}</Text>
-            <Text style={styles.statLabel}>Watchlist</Text>
+            <Text style={styles.statLabel}>{i18n.t('watchlist')}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>{allWatchedMovieCount}</Text>
-            <Text style={styles.statLabel}>Watched</Text>
+            <Text style={styles.statLabel}>{i18n.t('watched')}</Text>
           </View>
         </View>
 
         <View style={styles.bioContainer}>
-          <SecondaryText style={styles.bioLabel}>Bio</SecondaryText>
+          <SecondaryText style={styles.bioLabel}>{i18n.t('bio')}</SecondaryText>
           <Text style={styles.bioText}>{user?.bio || 'No bio yet'}</Text>
         </View>
 
@@ -318,7 +319,9 @@ export default function ProfileScreen() {
       <CustomModal visible={isToggle} onPress={toggle} height={'100%'}>
         <View style={styles.modalContainer}>
           <View style={styles.modalSection}>
-            <PrimaryText style={styles.modalSectionTitle}>Username</PrimaryText>
+            <PrimaryText style={styles.modalSectionTitle}>
+              {i18n.t('username')}
+            </PrimaryText>
             <CustomInput
               placeholder="Username"
               value={newUser?.userName}
@@ -328,7 +331,9 @@ export default function ProfileScreen() {
           </View>
 
           <View style={styles.modalSection}>
-            <PrimaryText style={styles.modalSectionTitle}>Avatar</PrimaryText>
+            <PrimaryText style={styles.modalSectionTitle}>
+              {i18n.t('avatar')}
+            </PrimaryText>
             <FlatList
               contentContainerStyle={styles.avatarList}
               showsHorizontalScrollIndicator={false}
@@ -348,7 +353,9 @@ export default function ProfileScreen() {
           </View>
 
           <View style={styles.modalSection}>
-            <PrimaryText style={styles.modalSectionTitle}>Bio</PrimaryText>
+            <PrimaryText style={styles.modalSectionTitle}>
+              {i18n.t('bio')}
+            </PrimaryText>
             <CustomInput
               placeholder="Tell us about yourself..."
               value={newUser?.bio}

@@ -4,6 +4,7 @@ import {View, ScrollView, StyleSheet} from 'react-native';
 import Friendlist from '@src/components/organism/friendList';
 import UserLists from '@src/components/organism/userLists';
 import Header from '@src/components/organism/header';
+import ChatIcon from '@src/components/atoms/chatIcon';
 import {paddings} from '@src/styles/sizes';
 import theme from '@src/styles/theme';
 import {useAppSelector} from '@src/store/store';
@@ -36,19 +37,22 @@ export default function HomeScreen() {
   });
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.content}>
-        <Header
-          userName={currentUser?.userName || ''}
-          bio={currentUser?.bio}
-          avatarId={currentUser?.avatarId || 1}
-          watchlistCount={allWatchlistMovieCount}
-          watchedCount={allWatchedMovieCount}
-          friendsCount={friends.length}
-        />
-        <UserLists />
-        <Friendlist />
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <ChatIcon isNewNotification />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          <Header
+            userName={currentUser?.userName || ''}
+            bio={currentUser?.bio}
+            avatarId={currentUser?.avatarId || 1}
+            watchlistCount={allWatchlistMovieCount}
+            watchedCount={allWatchedMovieCount}
+            friendsCount={friends.length}
+          />
+          <UserLists />
+          <Friendlist />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
