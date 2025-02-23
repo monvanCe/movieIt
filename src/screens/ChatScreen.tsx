@@ -9,12 +9,7 @@ import {
   Image,
 } from 'react-native';
 import theme from '@src/styles/theme';
-import sizes, {
-  fontSizes,
-  spacing,
-  componentSizes,
-  borderRadius,
-} from '@src/styles/sizes';
+import sizes, {fontSizes, spacing, borderRadius} from '@src/styles/sizes';
 import {useAppSelector} from '@src/store/store';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -122,10 +117,6 @@ export default function ChatScreen() {
       }, 100);
     }
   };
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
 
   const styles = StyleSheet.create({
     container: {

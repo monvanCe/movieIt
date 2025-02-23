@@ -11,6 +11,7 @@ import {
   View,
   Animated,
   KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -127,19 +128,29 @@ export default function CustomModal({
             transform: [{translateY}],
           },
         ]}>
-        <View
-          style={{
-            height: containerHeight - changeY,
-            maxHeight: windowHeight - (Platform.OS === 'ios' ? insets.top : 0),
-            paddingHorizontal: paddings.medium,
-            paddingBottom: insets.bottom,
-          }}>
-          <View style={style.iconButtonContainer}>
-            <View style={style.modalSlider} />
-            <IconButton icon="close" onPress={onPress} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}>
+          <View
+            style={{
+              height: containerHeight - changeY,
+              maxHeight:
+                windowHeight - (Platform.OS === 'ios' ? insets.top : 0),
+              paddingHorizontal: paddings.medium,
+              paddingBottom: insets.bottom,
+            }}>
+            <View style={style.iconButtonContainer}>
+              <View style={style.modalSlider} />
+              <IconButton icon="close" onPress={onPress} />
+            </View>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              keyboardShouldPersistTaps="handled">
+              {children}
+            </ScrollView>
           </View>
-          {children}
-        </View>
+        </KeyboardAvoidingView>
       </Animated.View>
     </Modal>
   );
