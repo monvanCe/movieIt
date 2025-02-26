@@ -22,13 +22,15 @@ import {
   loadTheme,
   loadInternalUrl,
 } from '@src/store/actions/appConfigActions';
-import {appTheme} from '@src/const/enums';
+import {appTheme, notificationTypes} from '@src/const/enums';
 import theme, {themes} from '@src/styles/theme';
 import {
   initializeNotifications,
   setNotificationCallback,
 } from './src/utils/notification';
 import useNotification from '@src/hooks/useNotification';
+import {loadMessages} from '@src/store/actions/chatActions';
+import {useMessages} from '@src/hooks/useMessages';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -103,7 +105,9 @@ const TabNavigator = () => {
 };
 
 function AppLayout() {
-  const {updateByNotification} = useNotification();
+  const {updateByNotification: updateByNotificationNotification} =
+    useNotification();
+  const {updateByNotification: updateByNotificationMessage} = useMessages();
   const {login} = useAuth();
   const currentTheme = useAppSelector(state => state.appConfig.appTheme);
   const colors = themes[currentTheme];
@@ -118,6 +122,17 @@ function AppLayout() {
     });
   }, [currentTheme]);
 
+  const handleNotificationByType = (notification: any) => {
+    const notificationData = JSON.parse(notification.data.notificationData);
+    const notificationType = notificationData.type;
+
+    if (notificationType === notificationTypes.message) {
+      updateByNotificationMessage(notificationData);
+    } else {
+      updateByNotificationNotification(notification);
+    }
+  };
+
   useEffect(() => {
     const loadApp = async () => {
       await loadInternalUrl();
@@ -125,6 +140,7 @@ function AppLayout() {
       await loadTheme();
       await loadLanguage();
       await loadAppConfig();
+      await loadMessages();
     };
 
     loadApp().then(() => {
@@ -137,7 +153,7 @@ function AppLayout() {
   }, []);
 
   useEffect(() => {
-    setNotificationCallback(updateByNotification);
+    setNotificationCallback(handleNotificationByType);
 
     return () => {
       setNotificationCallback(() => () => {});

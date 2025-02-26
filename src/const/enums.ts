@@ -7,6 +7,7 @@ export enum storageKeys {
   appTheme = 'appTheme',
   appLanguage = 'appLanguage',
   auth = 'auth',
+  lastSeenMessage = 'lastSeenMessage',
 }
 
 export enum movieTypes {
@@ -27,6 +28,7 @@ export enum requestTypes {
 export enum notificationTypes {
   friendshipMovies = 'friendshipMovies',
   friendship = 'friendship',
+  message = 'message',
 }
 
 export enum notificationActionTypes {

@@ -8,6 +8,7 @@ import {
   setExternalApiKey,
   setExternalURL,
   setInternalUrl,
+  setRoomId,
 } from '@src/store/slices/appConfigSlice';
 import {store} from '@src/store/store';
 import storage from '@src/utils/storage';
@@ -60,6 +61,8 @@ export const loadAppConfig = async () => {
   const dispatch = store.dispatch;
   const res = await getConfigListService();
   const externalUrl = res.find((item: any) => item.key === 'imdb_url')?.value;
+  const roomId = res.find((item: any) => item.key === 'room')?.value;
+
   const externalApiKey = res.find(
     (item: any) => item.key === 'imdb_key',
   )?.value;
@@ -68,6 +71,7 @@ export const loadAppConfig = async () => {
   dispatch(setAvatars(avatars));
   dispatch(setExternalURL(externalUrl));
   dispatch(setExternalApiKey(externalApiKey));
+  dispatch(setRoomId(roomId));
 };
 
 export const loadInternalUrl = async () => {

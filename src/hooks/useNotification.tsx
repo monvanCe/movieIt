@@ -56,7 +56,7 @@ const useNotification = () => {
               id: otherUser._id,
               name: otherUser.userName,
               friendshipId: response.friendshipId,
-              avatar: otherUser.avatarId,
+              avatar: otherUser.avatarId.toString(),
             }),
           );
         }

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef, useMemo, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,30 +10,12 @@ import {
 } from 'react-native';
 import theme from '@src/styles/theme';
 import sizes, {fontSizes, spacing, borderRadius} from '@src/styles/sizes';
-import {useAppSelector} from '@src/store/store';
+import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-interface IMessage {
-  id: string;
-  userId: string;
-  username: string;
-  message: string;
-  avatar: string;
-}
-
-const FAKE_NAMES = [
-  'Ahmet',
-  'Mehmet',
-  'Ayşe',
-  'Fatma',
-  'Ali',
-  'Veli',
-  'Zeynep',
-  'Elif',
-  'Can',
-  'Deniz',
-];
+import {addMessages, setMessage} from '@src/store/slices/chatSlice';
+import {sendMessageService} from '@src/service/internalServices';
+import {useMessages} from '@src/hooks/useMessages';
 
 const COLORS = [
   '#FF6B6B',
@@ -52,8 +34,28 @@ export default function ChatScreen() {
   const navigation = useNavigation();
   const scrollViewRef = useRef<ScrollView>(null);
   const userColorsRef = useRef<{[key: string]: string}>({});
-  const currentUser = useAppSelector((state: any) => state.auth.currentUser);
-  const [message, setMessage] = useState('');
+  const currentUser = useAppSelector(state => state.auth.currentUser);
+  const message = useAppSelector(state => state.chat.message);
+  const messages = useAppSelector(state => state.chat.messages);
+  const dispatch = useAppDispatch();
+  const roomId = useAppSelector(state => state.appConfig.roomId);
+  const {setLastSeenMessageId} = useMessages();
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      setLastSeenMessageId(lastMessage._id);
+    }
+    return () => {};
+  }, [messages]);
+
+  const uniqueMessages = messages.reduce((acc, message) => {
+    const existing = acc.find(m => m._id === message._id);
+    if (!existing) {
+      return [...acc, message];
+    }
+    return acc;
+  }, [] as IMessage[]);
 
   const getUserColor = (userId: string) => {
     if (!userColorsRef.current[userId]) {
@@ -69,53 +71,12 @@ export default function ChatScreen() {
     return userColorsRef.current[userId];
   };
 
-  const avatars = [
-    'https://storage.googleapis.com/movielt/avatars/1.png',
-    'https://storage.googleapis.com/movielt/avatars/2.png',
-    'https://storage.googleapis.com/movielt/avatars/3.png',
-    'https://storage.googleapis.com/movielt/avatars/4.png',
-    'https://storage.googleapis.com/movielt/avatars/5.png',
-    'https://storage.googleapis.com/movielt/avatars/6.png',
-    'https://storage.googleapis.com/movielt/avatars/7.png',
-    'https://storage.googleapis.com/movielt/avatars/8.png',
-    'https://storage.googleapis.com/movielt/avatars/9.png',
-  ];
-
-  const generateRandomMessage = (userId: string): IMessage => ({
-    id: Math.random().toString(),
-    userId,
-    username: FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)],
-    message: `This is a random message ${Math.floor(Math.random() * 1000)}`,
-    avatar: avatars[Math.floor(Math.random() * avatars.length)],
-  });
-
-  const [messages, setMessages] = useState<IMessage[]>(() => {
-    const initialMessages = [
-      generateRandomMessage('user123'),
-      generateRandomMessage('user456'),
-      generateRandomMessage('user123'),
-      generateRandomMessage('user789'),
-    ];
-
-    return initialMessages;
-  });
-
   const handleSend = () => {
-    if (message.trim()) {
-      const newMessage: IMessage = {
-        id: Math.random().toString(),
-        userId: currentUser?._id || 'currentUser',
-        username: currentUser?.userName || 'Me',
-        message: message.trim(),
-        avatar: avatars[currentUser?.avatarId || 0],
-      };
-
-      setMessages(prev => [...prev, newMessage]);
-      setMessage('');
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({animated: true});
-      }, 100);
-    }
+    dispatch(setMessage(''));
+    sendMessageService({content: message.trim(), roomId});
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({animated: true});
+    }, 100);
   };
 
   const styles = StyleSheet.create({
@@ -228,9 +189,9 @@ export default function ChatScreen() {
         onContentSizeChange={() =>
           scrollViewRef.current?.scrollToEnd({animated: true})
         }>
-        {messages.map((msg, index) => {
+        {uniqueMessages.map((msg, index) => {
           const isCurrentUser = msg.userId === currentUser?._id;
-          const previousMessage = index > 0 ? messages[index - 1] : null;
+          const previousMessage = index > 0 ? uniqueMessages[index - 1] : null;
           const nextMessage =
             index < messages.length - 1 ? messages[index + 1] : null;
 
@@ -242,7 +203,7 @@ export default function ChatScreen() {
 
           return (
             <View
-              key={msg.id}
+              key={msg._id}
               style={[
                 styles.messageWrapper,
                 isLastInGroup && styles.lastInGroup,
@@ -316,7 +277,7 @@ export default function ChatScreen() {
           placeholder="Mesajınızı yazın..."
           placeholderTextColor={colors.tertiaryText}
           value={message}
-          onChangeText={setMessage}
+          onChangeText={text => dispatch(setMessage(text))}
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
           <Ionicons name="send" size={16} color={colors.primaryText} />

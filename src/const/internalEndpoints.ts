@@ -27,3 +27,4 @@ export const delUserMovie = '/movies/remove';
 
 //app config endpoints
 export const getConfigList = '/appConfig';
+export const messages = '/messages';

@@ -13,6 +13,7 @@ export default function HomeScreen() {
   const colors = theme.useTheme();
   const currentUser = useAppSelector(state => state.auth.currentUser);
   const movies = useAppSelector(state => state.movies);
+  const {messages, lastSeenMessage} = useAppSelector(state => state.chat);
 
   const allWatchlistMovieCount =
     (movies?.user?.watchlist?.length || 0) +
@@ -38,7 +39,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ChatIcon isNewNotification />
+      <ChatIcon
+        isNewNotification={
+          messages.length > 0
+            ? messages[messages.length - 1]._id !== lastSeenMessage
+            : false
+        }
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Header

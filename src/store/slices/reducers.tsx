@@ -3,6 +3,7 @@ import authSlice from './authSlice';
 import moviesSlice from './moviesSlice';
 import notificationSlice from './notificationSlice';
 import movieListSlice from './movieListSlice';
+import chatSlice from './chatSlice';
 
 export default {
   appConfig: appConfigSlice,
@@ -10,4 +11,5 @@ export default {
   auth: authSlice,
   notifications: notificationSlice,
   movieList: movieListSlice,
+  chat: chatSlice,
 };

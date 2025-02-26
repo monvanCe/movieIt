@@ -118,3 +118,12 @@ interface INotification {
   subTitle: string;
   movieType?: string;
 }
+
+interface IMessage {
+  _id: string;
+  userId: string;
+  username: string;
+  message: string;
+  avatar: string;
+  updatedAt: string;
+}

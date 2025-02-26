@@ -1,6 +1,7 @@
 import * as endPoints from '@src/const/internalEndpoints';
 
 import {deleteRequest, getRequest, postRequest, putRequest} from './api';
+import {store} from '@src/store/store';
 
 // User endpoints
 export const loginService = async (
@@ -285,6 +286,31 @@ export const deleteUserMovieService = async (movieId: string) => {
 export const getConfigListService = async () => {
   try {
     const response = await getRequest('internal', endPoints.getConfigList);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getMessagesService = async (roomId: string) => {
+  try {
+    const response = await getRequest(
+      'internal',
+      `${endPoints.messages}/room/${roomId}`,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const sendMessageService = async (messageData: object) => {
+  try {
+    const response = await postRequest(
+      'internal',
+      endPoints.messages,
+      messageData,
+    );
     return response;
   } catch (error) {
     throw error;

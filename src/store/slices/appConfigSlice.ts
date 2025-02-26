@@ -9,6 +9,7 @@ interface AppConfigState {
   appLanguage: string;
   avatars: string[];
   internalUrl: string | null;
+  roomId: string;
 }
 
 const initialState: AppConfigState = {
@@ -18,6 +19,7 @@ const initialState: AppConfigState = {
   appLanguage: 'en',
   avatars: [],
   internalUrl: null,
+  roomId: '',
 };
 
 export const appConfigSlice = createSlice({
@@ -43,6 +45,9 @@ export const appConfigSlice = createSlice({
     setInternalUrl: (state, action: PayloadAction<string>) => {
       state.internalUrl = action.payload;
     },
+    setRoomId: (state, action: PayloadAction<string>) => {
+      state.roomId = action.payload;
+    },
   },
 });
 
@@ -53,6 +58,7 @@ export const {
   setAppLanguage,
   setAvatars,
   setInternalUrl,
+  setRoomId,
 } = appConfigSlice.actions;
 
 export default appConfigSlice.reducer;
