@@ -1,18 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons';
 
-import HomeScreen from '@src/screens/HomeScreen';
-import NotificationScreen from '@src/screens/NotificationScreen';
-import ProfileScreen from '@src/screens/ProfileScreen';
-import SearchScreen from '@src/screens/SearchScreen';
 import MovieListScreen from '@src/screens/MovieListScreen';
 import MovieDetailScreen from '@src/screens/MovieDetailScreen';
 import ChatScreen from '@src/screens/ChatScreen';
+import TabNavigator from '@src/screens/TabNavigator';
 import {Provider} from 'react-redux';
 import {store, useAppSelector} from '@src/store/store';
 import {useAuth} from '@src/hooks/useAuth';
@@ -31,78 +26,9 @@ import {
 import useNotification from '@src/hooks/useNotification';
 import {loadMessages} from '@src/store/actions/chatActions';
 import {useMessages} from '@src/hooks/useMessages';
+import {initializeAds} from '@src/service/adServices';
 
-const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-const TabNavigator = () => {
-  const colors = theme.useTheme();
-
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-        },
-        tabBarActiveTintColor: colors.primaryText,
-        tabBarInactiveTintColor: colors.primaryText,
-      }}>
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Icon
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={colors.primaryText}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Notification"
-        component={NotificationScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Icon
-              name={focused ? 'notifications' : 'notifications-outline'}
-              size={24}
-              color={colors.primaryText}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Icon
-              name={focused ? 'search' : 'search-outline'}
-              size={24}
-              color={colors.primaryText}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Icon
-              name={focused ? 'person' : 'person-outline'}
-              size={24}
-              color={colors.primaryText}
-            />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
 
 function AppLayout() {
   const {updateByNotification: updateByNotificationNotification} =
@@ -135,21 +61,19 @@ function AppLayout() {
 
   useEffect(() => {
     const loadApp = async () => {
-      await loadInternalUrl();
-      await login();
-      await loadTheme();
-      await loadLanguage();
-      await loadAppConfig();
-      await loadMessages();
+      await Promise.all([loadTheme(), loadLanguage(), loadInternalUrl()]);
+
+      await Promise.all([login(), loadAppConfig()]);
+
+      await Promise.all([
+        setIsAppLoaded(true),
+        loadMessages(),
+        initializeAds(),
+        initializeNotifications(),
+      ]);
     };
 
-    loadApp().then(() => {
-      setIsAppLoaded(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    initializeNotifications();
+    loadApp();
   }, []);
 
   useEffect(() => {

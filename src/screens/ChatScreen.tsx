@@ -13,9 +13,10 @@ import sizes, {fontSizes, spacing, borderRadius} from '@src/styles/sizes';
 import {useAppDispatch, useAppSelector} from '@src/store/store';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {addMessages, setMessage} from '@src/store/slices/chatSlice';
+import {setMessage} from '@src/store/slices/chatSlice';
 import {sendMessageService} from '@src/service/internalServices';
 import {useMessages} from '@src/hooks/useMessages';
+import BannerAdView from '@src/components/atoms/BannerAdView';
 
 const COLORS = [
   '#FF6B6B',
@@ -71,12 +72,16 @@ export default function ChatScreen() {
     return userColorsRef.current[userId];
   };
 
-  const handleSend = () => {
-    dispatch(setMessage(''));
-    sendMessageService({content: message.trim(), roomId});
+  const scrollToBottom = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({animated: true});
     }, 100);
+  };
+
+  const handleSend = () => {
+    dispatch(setMessage(''));
+    sendMessageService({content: message.trim(), roomId});
+    scrollToBottom();
   };
 
   const styles = StyleSheet.create({
@@ -90,6 +95,15 @@ export default function ChatScreen() {
       padding: spacing.small,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
+    },
+    adContainer: {
+      position: 'absolute',
+      top: 60,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      alignItems: 'center',
+      backgroundColor: colors.background,
     },
     backButton: {
       padding: spacing.xsmall,
@@ -181,6 +195,9 @@ export default function ChatScreen() {
           <Ionicons name="chevron-back" size={20} color={colors.primaryText} />
         </TouchableOpacity>
         <Text style={styles.title}>Sohbetler</Text>
+      </View>
+      <View style={styles.adContainer}>
+        <BannerAdView />
       </View>
       <ScrollView
         ref={scrollViewRef}
@@ -278,6 +295,7 @@ export default function ChatScreen() {
           placeholderTextColor={colors.tertiaryText}
           value={message}
           onChangeText={text => dispatch(setMessage(text))}
+          onPress={() => scrollToBottom()}
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
           <Ionicons name="send" size={16} color={colors.primaryText} />

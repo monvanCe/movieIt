@@ -1,5 +1,5 @@
 {
-  "name": "movieit",
+  "name": "movieIt",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -29,9 +29,11 @@
     "react-native": "0.76.3",
     "react-native-device-info": "^14.0.1",
     "react-native-gesture-handler": "^2.21.2",
+    "react-native-google-mobile-ads": "^14.9.1",
+    "react-native-iap": "^12.16.2",
     "react-native-localize": "^3.3.0",
     "react-native-pager-view": "^6.7.0",
-    "react-native-reanimated": "^3.16.7",
+    "react-native-reanimated": "^3.17.1",
     "react-native-rename": "^3.2.14",
     "react-native-safe-area-context": "^4.8.2",
     "react-native-screens": "^3.29.0",
